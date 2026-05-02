@@ -1,5 +1,9 @@
 insert into public.people (name)
 values
-  ('Alice'),
-  ('Bob')
+  ('Alana'),
+  ('Anton'),
+  ('Justine'),
+  ('Marilia'),
+  ('Nick'),
+  ('Ranjit')
 on conflict do nothing;

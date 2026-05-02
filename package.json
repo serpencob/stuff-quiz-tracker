@@ -2,18 +2,14 @@
   "name": "stuff-quiz-tracker",
   "private": true,
   "version": "0.1.0",
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
+  "workspaces": ["frontend"],
   "packageManager": "bun@1.2.13",
   "scripts": {
+    "dev": "bun run --cwd frontend dev",
     "dev:frontend": "bun run --cwd frontend dev",
-    "dev:backend": "bun run --cwd backend dev",
-    "dev": "bun run dev:frontend",
-    "build": "bun run --cwd frontend build && bun run --cwd backend build",
-    "lint": "bun run --cwd frontend lint && bun run --cwd backend lint",
-    "typecheck": "bun run --cwd frontend typecheck && bun run --cwd backend typecheck"
+    "build": "bun run --cwd frontend build",
+    "lint": "bun run --cwd frontend lint",
+    "typecheck": "bun run --cwd frontend typecheck"
   },
   "engines": {
     "node": ">=20"

@@ -1,10 +1,17 @@
 # Stuff Quiz Tracker Monorepo
 
-Initial scaffold for a quiz statistics app with:
+Quiz statistics tracker:
 
-- `frontend`: React + Vite + TypeScript
-- `backend`: Express + TypeScript API service
+- `frontend`: React + Vite + TypeScript — talks to **Supabase** directly (anon key + RLS policies)
 - `supabase`: SQL migrations and seed data
+
+Features:
+
+- People add/list
+- Quiz entries (date, correct/incorrect, optional note)
+- Date filters (7/30/90/all), totals, accuracy
+- History charts (Recharts)
+- **LocalStorage** fallback when `VITE_DATA_MODE=local`
 
 ## Prerequisites
 
@@ -13,25 +20,24 @@ Initial scaffold for a quiz statistics app with:
 
 ## Quick start
 
-1. Install dependencies:
-   - `bun install`
-2. Copy environment template:
-   - `cp .env.example .env`
-3. Run frontend:
-   - `bun run dev:frontend`
-4. Run backend:
-   - `bun run dev:backend`
+1. `bun install`
+2. `cp .env.example .env` at the **repository root** (same folder as `README.md`). Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from your Supabase project (Settings → API). Only names starting with `VITE_` are exposed to the app. After changing env vars, restart the dev server. Vite is set up to load `.env` from the repo root, not from `frontend/` alone.
+3. Apply migrations (Supabase SQL editor or CLI), in order:
+   - `supabase/migrations/202605010001_initial_schema.sql`
+   - `supabase/migrations/202605010002_open_access_policies.sql`
+4. `bun run dev`
 
-## Workspace scripts
+Data mode:
 
-- `bun run dev:frontend`
-- `bun run dev:backend`
+- `VITE_DATA_MODE=supabase` (default): Postgres via Supabase JS client
+- `VITE_DATA_MODE=local`: browser-only storage, no shared data
+
+## Scripts
+
+- `bun run dev` — start Vite dev server
 - `bun run build`
 - `bun run typecheck`
 
-## Next implementation steps
+## Deployment
 
-- Connect frontend forms to backend routes
-- Add CRUD endpoints for people and quiz entries
-- Add charts and historical analytics views
-- Configure Supabase project and apply migrations
+See [DEPLOYMENT.md](DEPLOYMENT.md).
