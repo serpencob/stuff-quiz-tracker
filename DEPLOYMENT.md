@@ -13,7 +13,7 @@
 | `VITE_SUPABASE_ANON_KEY` | Yes | `anon` `public` key |
 | `VITE_DATA_MODE` | No | Default `supabase`. Use `local` only for offline demo |
 
-Apply migrations from `supabase/migrations/` before going live.
+Apply **all** migrations from `supabase/migrations/` before going live (including `202605020001_group_quiz_sessions.sql` for the dashboard group chart).
 
 ### Security note
 

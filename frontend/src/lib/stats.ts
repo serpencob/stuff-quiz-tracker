@@ -1,4 +1,27 @@
-import type { QuizEntry } from "../types";
+import type { GroupQuizSession, QuizEntry } from "../types";
+
+export type GroupChartPoint = { label: string; correct: number };
+
+export function groupSessionsToChartSeries(sessions: GroupQuizSession[]): GroupChartPoint[] {
+  const sorted = [...sessions].sort((a, b) => {
+    const d = a.quiz_date.localeCompare(b.quiz_date);
+    if (d !== 0) return d;
+    return a.created_at.localeCompare(b.created_at);
+  });
+  const countsByDate = new Map<string, number>();
+  const points: GroupChartPoint[] = [];
+  for (const s of sorted) {
+    const n = (countsByDate.get(s.quiz_date) ?? 0) + 1;
+    countsByDate.set(s.quiz_date, n);
+    const timeShort = new Date(s.created_at).toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    const label = n > 1 ? `${s.quiz_date} · ${timeShort}` : s.quiz_date;
+    points.push({ label, correct: s.correct_count });
+  }
+  return points;
+}
 
 export type Totals = {
   correct: number;
