@@ -37,7 +37,7 @@ body {
 }
 
 main {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 1.5rem;
 }
@@ -126,4 +126,86 @@ td {
   text-align: left;
   border-bottom: 1px solid #eaecf0;
   padding: 0.5rem 0.25rem;
+}
+
+.muted {
+  color: #667085;
+}
+
+.small {
+  font-size: 0.875rem;
+}
+
+.mt-1 {
+  margin-top: 0.75rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.chart-wrap-tall {
+  min-height: 320px;
+}
+
+.form-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.block-label {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: #344054;
+}
+
+.person-batch-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.person-batch-row {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr auto auto;
+  align-items: end;
+}
+
+@media (max-width: 600px) {
+  .person-batch-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.person-name {
+  font-weight: 600;
+  padding-bottom: 0.35rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+button.btn-secondary {
+  background: #f2f4f7;
+  color: #344054;
 }

@@ -7,7 +7,8 @@ The React app uses the Supabase JS client in the browser with the **anon** key. 
 Migration files (run in this order):
 
 1. `migrations/202605010001_initial_schema.sql` — tables and indexes  
-2. `migrations/202605010002_open_access_policies.sql` — RLS + permissive policies for the MVP
+2. `migrations/202605010002_open_access_policies.sql` — RLS + permissive policies for the MVP  
+3. `migrations/202605020001_group_quiz_sessions.sql` — group quiz sessions (dashboard chart) + RLS
 
 ---
 
@@ -135,5 +136,6 @@ If you prefer not to use the CLI:
 1. Open Supabase **SQL Editor**.
 2. Run `migrations/202605010001_initial_schema.sql` in full, then execute.
 3. Run `migrations/202605010002_open_access_policies.sql` in full, then execute.
+4. Run `migrations/202605020001_group_quiz_sessions.sql` in full, then execute.
 
-Order matters; do not skip the second file if you use the browser client with the anon key.
+Order matters; do not skip the RLS migration if you use the browser client with the anon key.

@@ -1,8 +1,7 @@
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, Navigate, Route, Routes } from "react-router-dom";
 import { getDataMode } from "./lib/dataService";
+import { AnalyticsPage } from "./pages/AnalyticsPage";
 import { HomePage } from "./pages/HomePage";
-import { PeoplePage } from "./pages/PeoplePage";
-import { HistoryPage } from "./pages/HistoryPage";
 
 export function App() {
   const dataMode = getDataMode();
@@ -13,15 +12,15 @@ export function App() {
         <h1>Stuff Quiz Tracker ({dataMode} mode)</h1>
         <nav>
           <Link to="/">Dashboard</Link>
-          <Link to="/people">People</Link>
-          <Link to="/history">History</Link>
+          <Link to="/analytics">Analytics</Link>
         </nav>
       </header>
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/people" element={<PeoplePage />} />
-          <Route path="/history" element={<HistoryPage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/people" element={<Navigate to="/analytics" replace />} />
+          <Route path="/history" element={<Navigate to="/analytics" replace />} />
         </Routes>
       </main>
     </div>
