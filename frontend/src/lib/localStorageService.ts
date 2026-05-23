@@ -11,6 +11,8 @@ const PEOPLE_KEY = "quiz-tracker-people";
 const ENTRIES_KEY = "quiz-tracker-entries";
 const GROUP_SESSIONS_KEY = "quiz-tracker-group-sessions";
 
+type StoredQuizEntry = Omit<QuizEntry, "session_id"> & { session_id?: string };
+
 function randomId() {
   return crypto.randomUUID();
 }
@@ -33,6 +35,13 @@ function write<T>(key: string, value: T[]) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
+function normalizeEntry(entry: StoredQuizEntry): QuizEntry {
+  return {
+    ...entry,
+    session_id: entry.session_id ?? entry.id
+  };
+}
+
 export const localStorageService: DataService = {
   async listPeople() {
     const people = read<Person>(PEOPLE_KEY);
@@ -48,7 +57,7 @@ export const localStorageService: DataService = {
   },
 
   async listEntries(filter) {
-    const entries = read<QuizEntry>(ENTRIES_KEY);
+    const entries = read<StoredQuizEntry>(ENTRIES_KEY).map(normalizeEntry);
     return entries
       .filter((entry) => {
         if (filter?.personId && entry.person_id !== filter.personId) return false;
@@ -56,7 +65,11 @@ export const localStorageService: DataService = {
         if (filter?.to && entry.entry_date > filter.to) return false;
         return true;
       })
-      .sort((a, b) => b.entry_date.localeCompare(a.entry_date));
+      .sort((a, b) => {
+        const d = b.entry_date.localeCompare(a.entry_date);
+        if (d !== 0) return d;
+        return b.created_at.localeCompare(a.created_at);
+      });
   },
 
   async createEntry(input: CreateEntryInput) {
@@ -64,6 +77,7 @@ export const localStorageService: DataService = {
     const entry: QuizEntry = {
       id: randomId(),
       person_id: input.personId,
+      session_id: input.sessionId ?? randomId(),
       entry_date: input.entryDate,
       correct_count: input.correctCount,
       incorrect_count: input.incorrectCount,
@@ -109,19 +123,25 @@ export const localStorageService: DataService = {
       if (!Number.isInteger(r.correctCount) || r.correctCount < 0) throw new Error("Invalid correct count.");
       if (!Number.isInteger(r.incorrectCount) || r.incorrectCount < 0) throw new Error("Invalid incorrect count.");
     }
-    if (rows.length === 0) return;
+    if (rows.length === 0) return [];
+    const sessionId = input.sessionId ?? randomId();
     const entries = read<QuizEntry>(ENTRIES_KEY);
+    const created: QuizEntry[] = [];
     for (const r of rows) {
-      entries.push({
+      const entry: QuizEntry = {
         id: randomId(),
         person_id: r.personId,
+        session_id: sessionId,
         entry_date: input.entryDate,
         correct_count: r.correctCount,
         incorrect_count: r.incorrectCount,
         note: null,
         created_at: nowIso()
-      });
+      };
+      entries.push(entry);
+      created.push(entry);
     }
     write(ENTRIES_KEY, entries);
+    return created;
   }
 };

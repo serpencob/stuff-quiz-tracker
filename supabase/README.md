@@ -9,6 +9,7 @@ Migration files (run in this order):
 1. `migrations/202605010001_initial_schema.sql` — tables and indexes  
 2. `migrations/202605010002_open_access_policies.sql` — RLS + permissive policies for the MVP  
 3. `migrations/202605020001_group_quiz_sessions.sql` — group quiz sessions (dashboard chart) + RLS
+4. `migrations/202605230001_add_quiz_entry_sessions.sql` — explicit individual quiz session IDs
 
 ---
 
@@ -103,7 +104,7 @@ Use the URI from the dashboard (often labeled “Connection string” / “URI�
 
 ### Step 7 — Verify in the dashboard
 
-1. **Table Editor** — confirm tables `people` and `quiz_entries` exist.  
+1. **Table Editor** — confirm tables `people`, `quiz_entries`, and `group_quiz_sessions` exist.
 2. **Authentication** is not required for this MVP schema; the app uses the **anon** key with RLS policies from migration `202605010002_*`.
 
 ### Step 8 — Wire the frontend
@@ -137,5 +138,6 @@ If you prefer not to use the CLI:
 2. Run `migrations/202605010001_initial_schema.sql` in full, then execute.
 3. Run `migrations/202605010002_open_access_policies.sql` in full, then execute.
 4. Run `migrations/202605020001_group_quiz_sessions.sql` in full, then execute.
+5. Run `migrations/202605230001_add_quiz_entry_sessions.sql` in full, then execute.
 
 Order matters; do not skip the RLS migration if you use the browser client with the anon key.

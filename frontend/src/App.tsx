@@ -1,4 +1,5 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom";
+import { AppDataProvider } from "./lib/AppDataContext";
 import { getDataMode } from "./lib/dataService";
 import { AnalyticsPage } from "./pages/AnalyticsPage";
 import { HomePage } from "./pages/HomePage";
@@ -16,12 +17,14 @@ export function App() {
         </nav>
       </header>
       <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/analytics" element={<AnalyticsPage />} />
-          <Route path="/people" element={<Navigate to="/analytics" replace />} />
-          <Route path="/history" element={<Navigate to="/analytics" replace />} />
-        </Routes>
+        <AppDataProvider>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/people" element={<Navigate to="/analytics" replace />} />
+            <Route path="/history" element={<Navigate to="/analytics" replace />} />
+          </Routes>
+        </AppDataProvider>
       </main>
     </div>
   );

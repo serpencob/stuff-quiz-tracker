@@ -7,6 +7,7 @@ export type Person = {
 export type QuizEntry = {
   id: string;
   person_id: string;
+  session_id: string;
   entry_date: string;
   correct_count: number;
   incorrect_count: number;
@@ -23,6 +24,7 @@ export type GroupQuizSession = {
 
 export type CreateEntryInput = {
   personId: string;
+  sessionId?: string;
   entryDate: string;
   correctCount: number;
   incorrectCount: number;
@@ -30,6 +32,7 @@ export type CreateEntryInput = {
 };
 
 export type SubmitPersonEntriesInput = {
+  sessionId?: string;
   entryDate: string;
   rows: { personId: string; correctCount: number; incorrectCount: number }[];
 };
@@ -41,5 +44,5 @@ export type DataService = {
   createEntry: (input: CreateEntryInput) => Promise<QuizEntry>;
   listGroupQuizSessions: (filter?: { from?: string; to?: string }) => Promise<GroupQuizSession[]>;
   appendGroupQuizSession: (input: { correctCount: number; quizDate: string }) => Promise<GroupQuizSession>;
-  submitPersonEntries: (input: SubmitPersonEntriesInput) => Promise<void>;
+  submitPersonEntries: (input: SubmitPersonEntriesInput) => Promise<QuizEntry[]>;
 };

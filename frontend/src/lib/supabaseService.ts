@@ -38,6 +38,7 @@ export const supabaseService: DataService = {
     const client = requireClient();
     const row = {
       person_id: input.personId,
+      session_id: input.sessionId ?? crypto.randomUUID(),
       entry_date: input.entryDate,
       correct_count: input.correctCount,
       incorrect_count: input.incorrectCount,
@@ -85,15 +86,18 @@ export const supabaseService: DataService = {
       if (!Number.isInteger(r.correctCount) || r.correctCount < 0) throw new Error("Invalid correct count.");
       if (!Number.isInteger(r.incorrectCount) || r.incorrectCount < 0) throw new Error("Invalid incorrect count.");
     }
-    if (rows.length === 0) return;
+    if (rows.length === 0) return [];
+    const sessionId = input.sessionId ?? crypto.randomUUID();
     const payload = rows.map((r) => ({
       person_id: r.personId,
+      session_id: sessionId,
       entry_date: input.entryDate,
       correct_count: r.correctCount,
       incorrect_count: r.incorrectCount,
       note: null as string | null
     }));
-    const { error } = await client.from("quiz_entries").insert(payload);
+    const { data, error } = await client.from("quiz_entries").insert(payload).select("*");
     if (error) throw new Error(error.message);
+    return data as QuizEntry[];
   }
 };
