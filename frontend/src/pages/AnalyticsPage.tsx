@@ -1,8 +1,7 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { dataService } from "../lib/dataService";
-import { filterEntriesByRange, toDailySeries } from "../lib/stats";
-import type { Person, QuizEntry } from "../types";
+import { useAppData } from "../lib/AppDataContext";
+import { filterEntriesByRange, toSessionSeries } from "../lib/stats";
 
 const DATE_FILTERS = [
   { label: "Last 7 days", value: "7" },
@@ -11,46 +10,44 @@ const DATE_FILTERS = [
   { label: "All time", value: "all" }
 ] as const;
 
+function AnalyticsSkeleton() {
+  return (
+    <section>
+      <h2>Analytics</h2>
+      <div className="card skeleton-card">
+        <span className="skeleton-line skeleton-title" />
+        <span className="skeleton-row" />
+      </div>
+      <div className="card skeleton-card">
+        <span className="skeleton-line skeleton-title" />
+        <span className="skeleton-block" />
+      </div>
+    </section>
+  );
+}
+
 export function AnalyticsPage() {
-  const [people, setPeople] = useState<Person[]>([]);
-  const [entries, setEntries] = useState<QuizEntry[]>([]);
+  const { people, entries, isLoading, error: loadError, clearError, addPerson } = useAppData();
   const [name, setName] = useState("");
   const [selectedPersonId, setSelectedPersonId] = useState("");
   const [selectedRange, setSelectedRange] = useState<(typeof DATE_FILTERS)[number]["value"]>("30");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-
-  async function loadData() {
-    try {
-      setError("");
-      const [loadedPeople, loadedEntries] = await Promise.all([dataService.listPeople(), dataService.listEntries()]);
-      setPeople(loadedPeople);
-      setEntries(loadedEntries);
-    } catch (loadError) {
-      setError(`Failed to load data: ${String(loadError)}`);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    void loadData();
-  }, []);
+  const [pageError, setPageError] = useState("");
+  const displayedError = pageError || loadError;
 
   async function onAddPerson(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmed = name.trim();
     if (!trimmed) {
-      setError("Name is required.");
+      setPageError("Name is required.");
       return;
     }
     try {
-      setError("");
-      await dataService.createPerson(trimmed);
+      setPageError("");
+      clearError();
+      await addPerson(trimmed);
       setName("");
-      await loadData();
     } catch (createError) {
-      setError(`Failed to add person: ${String(createError)}`);
+      setPageError(`Failed to add person: ${String(createError)}`);
     }
   }
 
@@ -60,13 +57,15 @@ export function AnalyticsPage() {
     return filterEntriesByRange(forPerson, range);
   }, [entries, selectedPersonId, selectedRange]);
 
-  const dailySeries = useMemo(() => toDailySeries(scopedEntries), [scopedEntries]);
+  const sessionSeries = useMemo(() => toSessionSeries(scopedEntries), [scopedEntries]);
+
+  if (isLoading) return <AnalyticsSkeleton />;
 
   return (
     <section>
       <h2>Analytics</h2>
-      <p>Manage people and view combined correct vs incorrect by day.</p>
-      {error && <p className="error">{error}</p>}
+      <p>Manage people and view correct vs incorrect by quiz session.</p>
+      {displayedError && <p className="error">{displayedError}</p>}
 
       <form className="card form-grid" onSubmit={onAddPerson}>
         <h3>Add person</h3>
@@ -105,17 +104,15 @@ export function AnalyticsPage() {
       </div>
 
       <div className="card">
-        <h3>Correct vs incorrect by day</h3>
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : dailySeries.length === 0 ? (
+        <h3>Correct vs incorrect by session</h3>
+        {sessionSeries.length === 0 ? (
           <p className="muted">No entries in this range.</p>
         ) : (
           <div className="chart-wrap chart-wrap-tall">
             <ResponsiveContainer width="100%" height={320}>
-              <LineChart data={dailySeries}>
+              <LineChart data={sessionSeries} margin={{ bottom: 48, left: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
+                <XAxis dataKey="label" interval={0} angle={-35} textAnchor="end" height={70} tick={{ fontSize: 11 }} />
                 <YAxis />
                 <Tooltip />
                 <Legend />

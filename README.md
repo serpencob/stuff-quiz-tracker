@@ -7,8 +7,8 @@ Quiz statistics tracker:
 
 ## Features
 
-- **Dashboard:** Line chart of **group** quiz sessions (correct count 0–15 each); new sessions use **today’s date** automatically. **Individual** logging: per-person correct/incorrect in local state, saved in **one Submit** per batch (same automatic date).
-- **Analytics:** Add people; filter by person and date range; **correct vs incorrect per day** (summed when multiple entries share a day).
+- **Dashboard:** Line chart of **group** quiz sessions (correct count 0–15 each); new sessions use **today’s date** automatically. One submit form records the required group score plus optional per-person correct/incorrect counts.
+- **Analytics:** Add people; filter by person and date range; **correct vs incorrect per session** (same-day sessions stay separate).
 - **LocalStorage** fallback when `VITE_DATA_MODE=local` (includes `group_quiz_sessions` in browser storage).
 
 ## Prerequisites
@@ -24,6 +24,7 @@ Quiz statistics tracker:
    - `supabase/migrations/202605010001_initial_schema.sql`
    - `supabase/migrations/202605010002_open_access_policies.sql`
    - `supabase/migrations/202605020001_group_quiz_sessions.sql`
+   - `supabase/migrations/202605230001_add_quiz_entry_sessions.sql`
 4. `bun run dev`
 
 ### Data mode
